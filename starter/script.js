@@ -85,58 +85,87 @@ const displayMovements = function (movements) {
   });
 };
 
-//Add movement rows  into the movement element
-displayMovements(account1.movements);
-
 //PRINT the balance
 const calcDisplayBalance = function (movement) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  const balance = movement.reduce((acc, mov) => acc + mov, 0);
   labelBalance.textContent = `${balance}€`;
 };
 
-calcDisplayBalance(account1.movements);
-
 //Display summary
-const calcDisplaySummary = function (movements) {
-  const incomes = movements
+const calcDisplaySummary = function (acc) {
+  const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
 
-  const outcomes = movements
+  const outcomes = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
 
-  const interest = movements
+  const interest = acc.movements
     .filter(mov => mov > 0)
-    .map(deposit => (deposit * 1.2) / 100)
+    .map(deposit => (deposit * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-
   labelSumIn.textContent = `${incomes}€`;
   labelSumOut.textContent = `${Math.abs(outcomes)}€`;
   labelSumInterest.textContent = `${interest}€`;
 };
-calcDisplaySummary(account1.movements);
 
 //CREATE username
 const createUsernames = function (accs) {
   // get the accounts array
   accs.forEach(function (acc) {
-    // loop into the accoust array
+    // loop into the accounts array
     acc.username = acc.owner // create a new attribute "username" into the each account inside the accounts array
       .toLowerCase() // set the owner name to lower case
-      .split() //split the owners name
+      .split(' ') //split the owners name
       .map(name => name[0]) // return the first letter of each word of the name
       .join(''); // join all the letter and return it to the username attribute created
   });
 };
-
 createUsernames(accounts);
-const eurotoToUsd = 1.1;
-const totalDepositUSD = movements
-  .filter(mov => mov > 0)
-  .map(mov => mov * eurotoToUsd)
-  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(accounts);
+//Event handlers
+
+// set a variable so the current account can be accessed outside the fucntion block
+let currentAccount;
+btnLogin.addEventListener('click', function (e) {
+  // Prevent form from submitting (refreshing the page)   ******IMPORTANTE method on buttons****
+  e.preventDefault();
+
+  //look for the account submitted from the username input
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+  console.log(currentAccount);
+  //check if the pin is correct **using optional chaining(?) to check if the current account exists
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    //Discplay UI the welcome message
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+    containerApp.style.opacity = 100;
+    //Display movements
+    //Add movement rows  into the movement element
+    displayMovements(currentAccount.movements);
+    //Display summary
+    calcDisplaySummary(currentAccount);
+    //Display balance
+    calcDisplayBalance(currentAccount.movements);
+
+    // Clear the input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    // Some useless method to make the input cleaning prettier
+    inputLoginPin.blur();
+  }
+});
+
+// const eurotoToUsd = 1.1;
+// const totalDepositUSD = movements
+//   .filter(mov => mov > 0)
+//   .map(mov => mov * eurotoToUsd)
+//   .reduce((acc, mov) => acc + mov, 0);
 
 // console.log(accounts); // stw
 
