@@ -78,7 +78,7 @@ const displayMovements = function (movements) {
       <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-      <div class="movements__value">${mov}</div>
+      <div class="movements__value">${mov}€</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -96,6 +96,28 @@ const calcDisplayBalance = function (movement) {
 
 calcDisplayBalance(account1.movements);
 
+//Display summary
+const calcDisplaySummary = function (movements) {
+  const incomes = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+
+  const outcomes = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(deposit => (deposit * 1.2) / 100)
+    .filter(int => int >= 1)
+    .reduce((acc, int) => acc + int, 0);
+
+  labelSumIn.textContent = `${incomes}€`;
+  labelSumOut.textContent = `${Math.abs(outcomes)}€`;
+  labelSumInterest.textContent = `${interest}€`;
+};
+calcDisplaySummary(account1.movements);
+
 //CREATE username
 const createUsernames = function (accs) {
   // get the accounts array
@@ -110,6 +132,11 @@ const createUsernames = function (accs) {
 };
 
 createUsernames(accounts);
+const eurotoToUsd = 1.1;
+const totalDepositUSD = movements
+  .filter(mov => mov > 0)
+  .map(mov => mov * eurotoToUsd)
+  .reduce((acc, mov) => acc + mov, 0);
 
 // console.log(accounts); // stw
 
@@ -197,25 +224,7 @@ currenciesUnique.forEach(function (value, _, map) {
 
 */
 
-//CODING CHALLENGE #1
 /*
-const checkDogs = function (dogsJulia, dogsKate) {
-  const dogsOnlyJulia = dogsJulia.slice(1, -2);
-  const bothDogsArray = dogsOnlyJulia.concat(dogsKate);
-  console.log(bothDogsArray);
-
-  bothDogsArray.forEach(function (age, index) {
-    console.log(
-      age <= 3
-        ? `Dog number ${index + 1} is still a puppy🐶`
-        : `"Dogs number ${index + 1} is and adult, and is ${age} years old"`
-    );
-  });
-};
-
-checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
-checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
-
 
 
 
@@ -257,21 +266,86 @@ const depositsFor = [];
 for (const mov of movements) if (mov > 0) deposits.push(mov);
 
 console.log(movementsDescriptions);
-*/
 
 // console.log(movements);
 
-// //REDUCE accumulator -> SNOWBALL
-// // const balance = movements.reduce(function (acc, cur, i, arr) {
-// //   console.log(`Iteration ${i}: ${acc} + ${cur}`);
-// //   return acc + cur;
-// // }, 0);
 
-// //REDUCE Arrow function
-// const balance = movements.reduce((acc, cur, i, arr) => acc + cur, 0);
+//REDUCE accumulator -> SNOWBALL
+// const balance = movements.reduce(function (acc, cur, i, arr) {
+//   console.log(`Iteration ${i}: ${acc} + ${cur}`);
+//   return acc + cur;
+// }, 0);
 
-// console.log(balance);
+//REDUCE Arrow function
+const balance = movements.reduce((acc, cur, i, arr) => acc + cur, 0);
 
-// //USING FOR
-// let balance2 = 0;
-// for (const mov of movements) balance2 += mov;
+console.log(balance);
+
+//USING FOR
+let balance2 = 0;
+for (const mov of movements) balance2 += mov;
+
+//Maximum value
+//const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const max = movements.reduce((acc, mov) => {
+  if (acc > mov) return acc;
+  else return mov;
+}, movements[0]); // set the accumulator as the first movement of the array
+
+console.log(max);
+
+//FIND method
+const firstWithdrawal = movements.find(mov => mov < 0);
+
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+
+
+
+//CODING CHALLENGE #1
+
+const checkDogs = function (dogsJulia, dogsKate) {
+  const dogsOnlyJulia = dogsJulia.slice(1, -2);
+  const bothDogsArray = dogsOnlyJulia.concat(dogsKate);
+  console.log(bothDogsArray);
+
+  bothDogsArray.forEach(function (age, index) {
+    console.log(
+      age <= 3
+        ? `Dog number ${index + 1} is still a puppy🐶`
+        : `"Dogs number ${index + 1} is and adult, and is ${age} years old"`
+    );
+  });
+};
+
+checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
+//checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
+
+//CODING CHALLENGE #2
+
+const calcAverageHumanAge = function (ages) {
+  //this methods creates 3 arrays of each  processed ages
+  // const humanAge = ages.map((age, i) => (age <= 2 ? 2 * age : 16 + age * 4));// calculate the human age of each dog
+  // const adults = humanAge.filter((age, i) => age >= 18); // exclude dogs under 18 years of the human age
+  // const average = adults.reduce((acc, age, i, arr) => acc + age / arr.length,0); // calc the average of the human ages above 18 years
+
+  //this method returns the average value of the dogs ages array using chaining method
+  const humanAge = ages
+    .map(age => (age <= 2 ? 2 * age : 16 + age * 4)) // calculate the human age of each dog
+    .filter(age => age >= 18) // exclude dogs under 18 years of the human age
+    .reduce((acc, age, i, arr) => acc + age / arr.length, 0); // calc the average of the human ages above 18 years
+
+  return humanAge;
+};
+
+//Same method in arrow function
+/*
+const calcAverageHumanAge = ages => ages
+    .map(age => (age <= 2 ? 2 * age : 16 + age * 4)) // calculate the human age of each dog
+    .filter(age => age >= 18) // exclude dogs under 18 years of the human age
+    .reduce((acc, age, i, arr) => acc + age / arr.length, 0); // calc the average of the human ages above 18 years
+
+const avg1 = calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]);
+const avg2 = calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]);
+
+console.log(avg1, avg2);
+*/
