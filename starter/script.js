@@ -86,9 +86,10 @@ const displayMovements = function (movements) {
 };
 
 //PRINT the balance
-const calcDisplayBalance = function (movement) {
-  const balance = movement.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance}€`;
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+
+  labelBalance.textContent = `${acc.balance}€`;
 };
 
 //Display summary
@@ -125,6 +126,17 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 
+//update the UI
+const updateIU = function (acc) {
+  //Display movements
+  //Add movement rows  into the movement element
+  displayMovements(acc.movements);
+  //Display summary
+  calcDisplaySummary(acc);
+  //Display balance
+  calcDisplayBalance(acc);
+};
+
 console.log(accounts);
 //Event handlers
 
@@ -146,13 +158,8 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
-    //Display movements
-    //Add movement rows  into the movement element
-    displayMovements(currentAccount.movements);
-    //Display summary
-    calcDisplaySummary(currentAccount);
-    //Display balance
-    calcDisplayBalance(currentAccount.movements);
+    //update UI
+    updateIU(currentAccount);
 
     // Clear the input fields
     inputLoginUsername.value = inputLoginPin.value = '';
@@ -161,6 +168,29 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
+btnTransfer.addEventListener('click', function (e) {
+  // Prevent form from submitting (refreshing the page)   ******IMPORTANTE method on buttons****
+  e.preventDefault();
+
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
+
+  inputTransferAmount.value = inputTransferTo.value = '';
+
+  if (
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.username !== currentAccount.username
+  ) {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    //Update UI
+    updateIU(currentAccount);
+  }
+});
 // const eurotoToUsd = 1.1;
 // const totalDepositUSD = movements
 //   .filter(mov => mov > 0)
