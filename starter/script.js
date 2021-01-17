@@ -191,6 +191,26 @@ btnTransfer.addEventListener('click', function (e) {
     updateIU(currentAccount);
   }
 });
+
+// Close account event button
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (
+    currentAccount.pin === Number(inputClosePin).value &&
+    currentAccount.username === inputCloseUsername.value
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+
+    accounts.splice(index, 1);
+    //Hide UI
+    containerApp.style.opacity = 0;
+  }
+  inputCloseUsername.value = inputClosePin.value = '';
+});
+
 // const eurotoToUsd = 1.1;
 // const totalDepositUSD = movements
 //   .filter(mov => mov > 0)
