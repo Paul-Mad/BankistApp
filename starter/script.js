@@ -197,8 +197,8 @@ btnClose.addEventListener('click', function (e) {
   e.preventDefault();
 
   if (
-    currentAccount.pin === Number(inputClosePin).value &&
-    currentAccount.username === inputCloseUsername.value
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
   ) {
     const index = accounts.findIndex(
       acc => acc.username === currentAccount.username
@@ -209,6 +209,20 @@ btnClose.addEventListener('click', function (e) {
     containerApp.style.opacity = 0;
   }
   inputCloseUsername.value = inputClosePin.value = '';
+});
+//LOAN Button
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    //Add movement
+    currentAccount.movements.push(amount);
+
+    //update UI
+    updateIU(currentAccount);
+    inputLoanAmount.value = '';
+  }
 });
 
 // const eurotoToUsd = 1.1;
@@ -378,8 +392,25 @@ const firstWithdrawal = movements.find(mov => mov < 0);
 
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 
+*/
 
+// SOME method
 
+//Exemples with include that is different from some
+//Includes shows equality
+console.log(movements.includes(-130));
+
+//Some shows condition and returns true or false for the condition
+
+const anyDeposits = movements.some(mov => mov > 0);
+
+// EVERY method
+console.log(account4.movements.every(mov => mov > 0));
+
+//Separate callback
+
+const deposit = mov => mov > 0;
+/*
 //CODING CHALLENGE #1
 
 const checkDogs = function (dogsJulia, dogsKate) {
