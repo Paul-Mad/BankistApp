@@ -67,11 +67,13 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 //DISLAY MOVEMENTS
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   //clean the element movements
   containerMovements.innerHTML = '';
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
   //loop into the movements array
-  movements.forEach(function (mov, i) {
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
     <div class="movements__row">
@@ -225,6 +227,24 @@ btnLoan.addEventListener('click', function (e) {
   }
 });
 
+//SORT button
+let sortMode = 0;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  displayMovements(currentAccount.movements, !sortMode);
+  sortMode = !sortMode;
+
+  // MY WAY WORKS!!!
+  // if (sortMode === 0) {
+  //   displayMovements(currentAccount.movements.slice().sort((a, b) => a - b));
+  //   sortMode = 1;
+  // } else if (sortMode === 1) {
+  //   displayMovements(currentAccount.movements);
+  //   sortMode = 0;
+  // }
+});
+
 // const eurotoToUsd = 1.1;
 // const totalDepositUSD = movements
 //   .filter(mov => mov > 0)
@@ -374,7 +394,7 @@ const balance = movements.reduce((acc, cur, i, arr) => acc + cur, 0);
 
 console.log(balance);
 
-//USING FOR
+//Using FOR
 let balance2 = 0;
 for (const mov of movements) balance2 += mov;
 
@@ -394,6 +414,39 @@ const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 
 */
 
+//SORTING ARRAYS
+
+//strings
+const owners = ['Jonas', 'Zach', 'Adam', 'Martha'];
+console.log(owners.sort());
+
+//Numbers
+console.log(movements);
+
+//return < 0 , A, B (keep order)
+//return > 0 , B ,A (switch order)
+
+//Ascending
+// movements.sort((a, b) => {
+//   if (a > b) return 1;
+//   if (a < b) return -1;
+// });
+
+movements.sort((a, b) => a - b); //Simpler way for ascending sort
+
+console.log(movements);
+
+//Descending
+// movements.sort((a, b) => {
+//   if (a > b) return -1;
+//   if (a < b) return 1;
+// });
+
+movements.sort((a, b) => b - a); //Simpler way for Descending sort
+
+console.log(movements);
+
+/*
 // SOME method
 
 //Exemples with include that is different from some
@@ -410,7 +463,35 @@ console.log(account4.movements.every(mov => mov > 0));
 //Separate callback
 
 const deposit = mov => mov > 0;
-/*
+console.log(movements.some(deposit));
+console.log(movements.every(deposit));
+console.log(movements.filter(deposit));
+
+//FLAT method
+const arr = [[1, 2, 3], [4, 5, 6], 7, 7]; //nested array
+
+console.log(arr.flat()); // join all the nested array as one
+
+const arrDeep = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+console.log(arrDeep.flat(2)); // parameter goes deep in the nested array
+
+const accountMovements = accounts.map(acc => acc.movements); // retrieve the movements from the accounts obeject
+const allMovements = accountMovements.flat();
+const overalBalance = allMovements.reduce((acc, mov) => acc + mov, 0);
+
+//Chained methods
+const overalBalanceChained = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+
+//flatMap combine flat and map methods
+const overalBalanceChained = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(allMovements);
+
 //CODING CHALLENGE #1
 
 const checkDogs = function (dogsJulia, dogsKate) {
