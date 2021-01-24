@@ -141,6 +141,15 @@ const formatMovementDate = function (date, locale) {
   return new Intl.DateTimeFormat(locale).format(date);
 };
 
+// FORMAT CURRENCY
+const formatCur = function (value, locale, currency) {
+  //Format the movement (mov) to be displayed in the current locale
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 //DISLAY MOVEMENTS
 const displayMovements = function (acc, sort = false) {
   //clean the element movements
@@ -156,13 +165,16 @@ const displayMovements = function (acc, sort = false) {
     const date = new Date(acc.movementsDates[i]);
     //Display date
     const displayDate = formatMovementDate(date, acc.locale);
+    //Format movement numbers
+    const formattedMov = formatCur(mov, acc.locale, acc.currency);
+    //Build element to be displayed
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
       <div class="movements__date">${displayDate}</div>
-      <div class="movements__value">${mov.toFixed(2)}€</div>
+      <div class="movements__value">${formattedMov}</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -173,7 +185,7 @@ const displayMovements = function (acc, sort = false) {
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
 
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 //Display summary
@@ -191,9 +203,10 @@ const calcDisplaySummary = function (acc) {
     .map(deposit => (deposit * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
-  labelSumOut.textContent = `${Math.abs(outcomes.toFixed(2))}€`;
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  //Display numbers in the current locale format
+  labelSumIn.textContent = formatCur(incomes, acc.locale, acc.currency);
+  labelSumOut.textContent = formatCur(outcomes, acc.locale, acc.currency);
+  labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
 };
 
 //CREATE username
@@ -235,8 +248,6 @@ containerApp.style.opacity = 100;
 
 ///////////////////           BUTTONS              //////////////////////////////////////////////////////////////////
 
-//Experimenting API
-
 //LOGIN BUTTON
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting (refreshing the page)   ******IMPORTANTE method on buttons****
@@ -257,6 +268,7 @@ btnLogin.addEventListener('click', function (e) {
 
     const now = new Date();
 
+    //Experimenting API
     // Internationalization for dates
     const options = {
       hour: 'numeric',
@@ -1025,3 +1037,16 @@ const days1 = calcdaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
 console.log(days1);
 
 */
+
+const num = 3884764.23;
+
+const option = {
+  style: 'currency', // currency, percent, unit
+  unit: 'celsius', // celsius, mile-per-hour
+  currency: 'EUR',
+  // useGrouping: false
+};
+
+console.log('US: ', new Intl.NumberFormat('en-US', option).format(num));
+console.log('Germany: ', new Intl.NumberFormat('de-DE', option).format(num));
+console.log('UK: ', new Intl.NumberFormat('en-GB', option).format(num));
