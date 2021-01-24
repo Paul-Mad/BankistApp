@@ -59,6 +59,18 @@ const account3 = {
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2021-01-20T14:11:59.604Z',
+    '2021-01-22T17:01:17.194Z',
+    '2021-01-23T23:36:17.929Z',
+    '2021-01-24T10:51:36.790Z',
+  ],
+  currency: 'GBP',
+  locale: 'en-GB',
 };
 
 const account4 = {
@@ -66,6 +78,18 @@ const account4 = {
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2021-01-20T14:11:59.604Z',
+    '2021-01-22T17:01:17.194Z',
+    '2021-01-23T23:36:17.929Z',
+    '2021-01-24T10:51:36.790Z',
+  ],
+  currency: 'GBP',
+  locale: 'en-GB', //
 };
 
 const accounts = [account1, account2, account3, account4];
@@ -100,7 +124,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 ///////////////           FUNCTIONS        ///////////////////////////////
 
 // Format passed dates to be displayed
-const formatMovementDate = function (date) {
+const formatMovementDate = function (date, locale) {
   // Create movement dates
   const calcdaysPassed = (date1, date2) =>
     Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
@@ -109,12 +133,12 @@ const formatMovementDate = function (date) {
   if (daysPassed === 0) return 'Today';
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
-  else {
-    const day = `${date.getDate()}`.padStart(2, 0); // uses padStart() to add the 0 in the day if number is not two digits
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
+
+  // const day = `${date.getDate()}`.padStart(2, 0); // uses padStart() to add the 0 in the day if number is not two digits
+  // const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  // const year = date.getFullYear();
+  // return `${day}/${month}/${year}`;
+  return new Intl.DateTimeFormat(locale).format(date);
 };
 
 //DISLAY MOVEMENTS
@@ -131,7 +155,7 @@ const displayMovements = function (acc, sort = false) {
     //Create date from the account object
     const date = new Date(acc.movementsDates[i]);
     //Display date
-    const displayDate = formatMovementDate(date);
+    const displayDate = formatMovementDate(date, acc.locale);
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">${
@@ -211,6 +235,8 @@ containerApp.style.opacity = 100;
 
 ///////////////////           BUTTONS              //////////////////////////////////////////////////////////////////
 
+//Experimenting API
+
 //LOGIN BUTTON
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting (refreshing the page)   ******IMPORTANTE method on buttons****
@@ -229,14 +255,33 @@ btnLogin.addEventListener('click', function (e) {
     }`;
     containerApp.style.opacity = 100;
 
-    // Create current date and time
     const now = new Date();
-    const day = `${now.getDate()}`.padStart(2, 0); // uses padStart() to add the 0 in the day if number is not two digits
-    const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    const year = now.getFullYear();
-    const hour = `${now.getHours()}`.padStart(2, 0);
-    const min = `${now.getMinutes()}`.padStart(2, 0);
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`; //day/month/Year hour:minutes
+
+    // Internationalization for dates
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric', // 2-digit
+      // weekday: 'long', // short, narrow
+    };
+
+    //const locale = navigator.language;
+
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options
+    ).format(now);
+
+    // // Create current date and time
+    // const now = new Date();
+    // const day = `${now.getDate()}`.padStart(2, 0); // uses padStart() to add the 0 in the day if number is not two digits
+    // const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    // const year = now.getFullYear();
+    // const hour = `${now.getHours()}`.padStart(2, 0);
+    // const min = `${now.getMinutes()}`.padStart(2, 0);
+    // labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`; //day/month/Year hour:minutes
 
     //update UI
     updateIU(currentAccount);
@@ -966,13 +1011,17 @@ console.log(Date.now());
 
 future.setFullYear(2040); // set the year to the variable
 console.log(future);
-*/
+
 const future = new Date(2037, 10, 19, 15, 23);
 console.log(+future);
 
+
+// return the number of days passed between two dates
 const calcdaysPassed = (date1, date2) =>
   Math.abs(date2 - date1) / (1000 * 60 * 60 * 24);
 
 const days1 = calcdaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
 
 console.log(days1);
+
+*/
