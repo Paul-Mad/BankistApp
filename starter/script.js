@@ -207,6 +207,11 @@ const calcDisplaySummary = function (acc) {
   labelSumIn.textContent = formatCur(incomes, acc.locale, acc.currency);
   labelSumOut.textContent = formatCur(outcomes, acc.locale, acc.currency);
   labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
+
+  // WITHOUT INTERNATIONALIZATION
+  // labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  // labelSumOut.textContent = `${Math.abs(outcomes.toFixed(2))}€`;
+  // labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 //CREATE username
@@ -235,16 +240,42 @@ const updateIU = function (acc) {
 };
 
 console.log(accounts);
-//Event handlers
 
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = time % 60;
+    // In each call, print the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    //When 0 seconds, stop timer and log out the user
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+    //Decrease 1 sec
+    time--;
+  };
+  //set time to 5 minutes
+  let time = 300;
+  //Decrease 1 sec
+  time--;
+  //call the timer every second
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+};
+
+//Event handlers
 // set a variable so the current account can be accessed outside the fucntion block
-let currentAccount;
+let currentAccount, timer;
 
 //FAKE ALWAYS LOGGED IN -----------------------
 
-currentAccount = account1;
-updateIU(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateIU(currentAccount);
+// containerApp.style.opacity = 100;
 
 ///////////////////           BUTTONS              //////////////////////////////////////////////////////////////////
 
@@ -295,6 +326,11 @@ btnLogin.addEventListener('click', function (e) {
     // const min = `${now.getMinutes()}`.padStart(2, 0);
     // labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`; //day/month/Year hour:minutes
 
+    //Check if there is a timer running
+
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
+
     //update UI
     updateIU(currentAccount);
 
@@ -330,6 +366,9 @@ btnTransfer.addEventListener('click', function (e) {
     receiverAcc.movementsDates.push(new Date().toISOString());
     //Update UI
     updateIU(currentAccount);
+    // reset the timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -358,12 +397,20 @@ btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Math.floor(inputLoanAmount.value);
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    //Add movement
-    currentAccount.movements.push(amount);
-    currentAccount.movementsDates.push(new Date().toISOString()); // Add new loan date
+    setTimeout(function () {
+      //Add movement
+      currentAccount.movements.push(amount);
+      currentAccount.movementsDates.push(new Date().toISOString()); // Add new loan date
 
-    //update UI
-    updateIU(currentAccount);
+      //update UI
+      updateIU(currentAccount);
+      // reset the timer
+      clearInterval(timer);
+      timer = startLogOutTimer();
+    }, 2500);
+    // reset the timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
     inputLoanAmount.value = '';
   }
 });
@@ -1036,7 +1083,7 @@ const days1 = calcdaysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24));
 
 console.log(days1);
 
-*/
+
 
 const num = 3884764.23;
 
@@ -1050,3 +1097,35 @@ const option = {
 console.log('US: ', new Intl.NumberFormat('en-US', option).format(num));
 console.log('Germany: ', new Intl.NumberFormat('de-DE', option).format(num));
 console.log('UK: ', new Intl.NumberFormat('en-GB', option).format(num));
+
+// FORMAT CURRENCY
+const formatCur = function (value, locale, currency) {
+  //Format the movement (mov) to be displayed in the current locale
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
+
+//Timers: setTimeout and setInterval
+
+const ingredients = ['olives', 'spinach'];
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2} 🍕`),
+  3000,
+  ...ingredients
+); //Delay the function's call by 3 seconds
+console.log('Wainting');
+
+if (ingredients.includes('spinach')) clearTimeout(pizzaTimer);
+
+//setInterval
+setInterval(function () {
+  const now = new Date();
+  const hour = now.getHours();
+  const min = now.getMinutes();
+  const sec = now.getSeconds();
+  console.log(`${hour}:${min}:${sec}`);
+}, 1000);
+*/
