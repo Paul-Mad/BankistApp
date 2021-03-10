@@ -15,7 +15,7 @@ const currencies = new Map([
 // DIFFERENT DATA! Contains movement dates, currency and locale
 
 const account1 = {
-  owner: 'Jonas Schmedtmann',
+  owner: 'Paulo Madeira',
   movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
   interestRate: 1.2, // %
   pin: 1111,
@@ -35,7 +35,7 @@ const account1 = {
 };
 
 const account2 = {
-  owner: 'Jessica Davis',
+  owner: 'Jonas Schmedtmann',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
@@ -239,7 +239,7 @@ const updateIU = function (acc) {
   calcDisplayBalance(acc);
 };
 
-console.log(accounts);
+//console.log(accounts);
 
 const startLogOutTimer = function () {
   const tick = function () {
@@ -288,7 +288,7 @@ btnLogin.addEventListener('click', function (e) {
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
-  console.log(currentAccount);
+  //console.log(currentAccount);
   //check if the pin is correct **using optional chaining(?) to check if the current account exists
   if (currentAccount?.pin === +inputLoginPin.value) {
     //Discplay UI the welcome message
