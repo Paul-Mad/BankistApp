@@ -1,6 +1,6 @@
-### Hi there 👋.
+### Hi there 👋
 
-## This is the Bankist
+## This is the BankistApp
 #### Javascript Learning Project
 This project was created while studying how to deal with arrays in Javascript throughout the "Complete JavaScript Course 2021: From Zero to Expert!".
 
