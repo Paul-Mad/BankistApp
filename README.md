@@ -19,7 +19,7 @@ What was implemented in this project:
 What to do next:
 - Recreate the project using React
 - Implement ES6 Classes to the project
-- Creat user account feature
+- Create user account feature
 
 
 DEMO:
