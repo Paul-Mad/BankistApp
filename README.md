@@ -40,5 +40,6 @@ Skills:  JAVASCRIPT / HTML / CSS
 - 🔭 I’m currently working on this project 
 - 🌱 I’m currently learning Javascript | React.js 
 
-  [<img src='https://cdn.jsdelivr.net/npm/simple-icons@3.0.1/icons/linkedin.svg' alt='linkedin' height='40'>](https://www.linkedin.com/in/paulomad/)  
+   <a href="https://www.linkedin.com/in/paulomad" target="_blank" rel="noopener noreferrer"><img width=35 src="https://cdn.worldvectorlogo.com/logos/linkedin-icon.svg"></a> &nbsp;&nbsp;&nbsp;&nbsp; 
+ 
 
